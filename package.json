@@ -4,8 +4,17 @@
   "type": "module",
   "description": "MCP server for ast-outline - a tree-sitter-based CLI that provides structural code outlines, digests, symbol extraction, and AST-aware grep",
   "main": "dist/index.js",
+  "bin": {
+    "ast-outline-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "start": "node dist/index.js",
     "start:http": "node dist/server/http-server.js",
     "dev": "tsc --watch",
