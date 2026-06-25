@@ -1,2 +1,2 @@
 // Export all services
-export * from './greeting-service.js';
+export * from './ast-outline-service.js';
