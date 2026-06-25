@@ -1,36 +1,127 @@
 import { FastMCP } from "fastmcp";
 import { z } from "zod";
-import * as services from "./services/index.js";
+import { AstOutlineService } from "./services/ast-outline-service.js";
+
+const service = new AstOutlineService();
 
 /**
  * Register all tools with the MCP server
- * 
- * @param server The FastMCP server instance
  */
 export function registerTools(server: FastMCP) {
-  // Greeting tool
+  // Outline tool - structural outline of files/directories
   server.addTool({
-    name: "hello_world",
-    description: "A simple hello world tool",
+    name: "ast_outline",
+    description:
+      "Get a structural outline of one or more files or directories. " +
+      "Returns signatures with line ranges (no bodies). " +
+      "Useful for understanding code structure without reading full files.",
     parameters: z.object({
-      name: z.string().describe("Name to greet")
+      paths: z.array(z.string()).min(1).describe("File or directory paths to outline"),
+      json: z.boolean().optional().describe("Return machine-readable JSON output"),
+      imports: z.boolean().optional().describe("Include import/use/using statements"),
+      noPrivate: z.boolean().optional().describe("Exclude private members"),
+      noFields: z.boolean().optional().describe("Exclude fields/properties"),
+      noDocs: z.boolean().optional().describe("Exclude documentation comments"),
+      noAttrs: z.boolean().optional().describe("Exclude attributes/decorators"),
     }),
     execute: async (params) => {
-      const greeting = services.GreetingService.generateGreeting(params.name);
-      return greeting;
-    }
+      const result = await service.outline(params.paths, {
+        json: params.json,
+        imports: params.imports,
+        noPrivate: params.noPrivate,
+        noFields: params.noFields,
+        noDocs: params.noDocs,
+        noAttrs: params.noAttrs,
+      });
+      if (result.exitCode !== 0 && !result.stdout) {
+        return `Error (exit ${result.exitCode}): ${result.stderr}`;
+      }
+      return result.stdout || result.stderr;
+    },
   });
 
-  // Farewell tool
+  // Digest tool - compact module map
   server.addTool({
-    name: "goodbye",
-    description: "A simple goodbye tool",
+    name: "ast_digest",
+    description:
+      "Get a compact one-page module map of a directory. " +
+      "Each file gets a size label ([tiny]/[medium]/[large]/[huge]) and token estimate. " +
+      "Type headers carry inheritance and decorators.",
     parameters: z.object({
-      name: z.string().describe("Name to bid farewell to")
+      paths: z.array(z.string()).min(1).describe("Directory paths to digest"),
+      json: z.boolean().optional().describe("Return machine-readable JSON output"),
     }),
     execute: async (params) => {
-      const farewell = services.GreetingService.generateFarewell(params.name);
-      return farewell;
-    }
+      const result = await service.digest(params.paths, {
+        json: params.json,
+      });
+      if (result.exitCode !== 0 && !result.stdout) {
+        return `Error (exit ${result.exitCode}): ${result.stderr}`;
+      }
+      return result.stdout || result.stderr;
+    },
+  });
+
+  // Show tool - extract symbol bodies
+  server.addTool({
+    name: "ast_show",
+    description:
+      "Extract the full source body of one or more symbols from a file. " +
+      "Supports suffix matching (e.g., 'Foo.Bar' matches '*.Foo.Bar'). " +
+      "Use --signature to get header only.",
+    parameters: z.object({
+      file: z.string().describe("File path to extract symbols from"),
+      symbols: z.array(z.string()).min(1).describe("Symbol names to extract"),
+      json: z.boolean().optional().describe("Return machine-readable JSON output"),
+      signature: z.boolean().optional().describe("Return header/signature only, no body"),
+    }),
+    execute: async (params) => {
+      const result = await service.show(params.file, params.symbols, {
+        json: params.json,
+        signature: params.signature,
+      });
+      if (result.exitCode !== 0 && !result.stdout) {
+        return `Error (exit ${result.exitCode}): ${result.stderr}`;
+      }
+      return result.stdout || result.stderr;
+    },
+  });
+
+  // Grep tool - AST-aware structural search
+  server.addTool({
+    name: "ast_grep",
+    description:
+      "AST-aware structural search across files. " +
+      "Matches are grouped by enclosing class/function, with kind tags [def]/[import]. " +
+      "Comment/string noise is filtered by default. Regex is auto-detected.",
+    parameters: z.object({
+      pattern: z.string().describe("Search pattern (literal or regex, auto-detected)"),
+      paths: z.array(z.string()).min(1).describe("File or directory paths to search"),
+      json: z.boolean().optional().describe("Return machine-readable JSON output"),
+      kind: z
+        .enum(["def", "call", "ref", "import"])
+        .optional()
+        .describe("Narrow results by classification kind"),
+      wordMatch: z.boolean().optional().describe("Match whole words only (-w)"),
+      caseInsensitive: z.boolean().optional().describe("Case-insensitive matching (-i)"),
+      filesOnly: z.boolean().optional().describe("List matching files only (-l)"),
+      count: z.boolean().optional().describe("Show match counts per file (-c)"),
+      maxCount: z.number().optional().describe("Maximum number of matches per file (-m)"),
+    }),
+    execute: async (params) => {
+      const result = await service.grep(params.pattern, params.paths, {
+        json: params.json,
+        kind: params.kind,
+        wordMatch: params.wordMatch,
+        caseInsensitive: params.caseInsensitive,
+        filesOnly: params.filesOnly,
+        count: params.count,
+        maxCount: params.maxCount,
+      });
+      if (result.exitCode !== 0 && !result.stdout) {
+        return `Error (exit ${result.exitCode}): ${result.stderr}`;
+      }
+      return result.stdout || result.stderr;
+    },
   });
 }

@@ -1,78 +1,41 @@
 {
-  "name": "@mcpdotdirect/create-mcp-server",
-  "module": "src/index.ts",
+  "name": "ast-outline-mcp",
+  "version": "1.0.0",
   "type": "module",
-  "version": "2.0.2",
-  "description": "CLI tool to create a new MCP (Model Context Protocol) server project",
-  "private": false,
-  "main": "build/index.js",
-  "bin": {
-    "create-mcp-server": "./bin/create-mcp-server.js"
-  },
-  "files": [
-    "bin",
-    "src/",
-    "build/",
-    ".gitignore",
-    "tsconfig.json",
-    "README.md",
-    "LICENSE"
-  ],
+  "description": "MCP server for ast-outline - a tree-sitter-based CLI that provides structural code outlines, digests, symbol extraction, and AST-aware grep",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "bun run src/index.ts",
-    "build": "bun build src/index.ts --outdir build --target node",
-    "build:http": "bun build src/server/http-server.ts --outdir build --target node --outfile http-server.js",
-    "dev": "bun --watch src/index.ts",
-    "start:http": "bun run src/server/http-server.ts",
-    "dev:http": "bun --watch src/server/http-server.ts",
-    "prepublishOnly": "bun run build && bun run build:http",
-    "version:patch": "npm version patch",
-    "version:minor": "npm version minor",
-    "version:major": "npm version major",
-    "release": "npm publish",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "changelog:latest": "conventional-changelog -p angular -r 1 > RELEASE_NOTES.md"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mcpdotdirect/template-mcp-server.git"
-  },
-  "publishConfig": {
-    "access": "public"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:http": "node dist/server/http-server.js",
+    "dev": "tsc --watch",
+    "test": "jest --config jest.config.cjs",
+    "test:watch": "jest --config jest.config.cjs --watch"
   },
   "keywords": [
     "mcp",
-    "model-context-protocol",
-    "template",
-    "server",
-    "ai",
-    "agent",
-    "create",
-    "generator",
-    "starter",
-    "boilerplate"
+    "ast-outline",
+    "code-analysis",
+    "tree-sitter",
+    "model-context-protocol"
   ],
-  "author": "vcart <info@mcp.direct>",
+  "author": "Xayan",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mcpdotdirect/template-mcp-server/issues"
-  },
-  "homepage": "https://github.com/mcpdotdirect/template-mcp-server#readme",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/cors": "^2.8.17",
-    "@types/node": "^20.17.24",
-    "conventional-changelog-cli": "^5.0.0"
-  },
-  "peerDependencies": {
-    "@valibot/to-json-schema": "^1.0.0",
-    "effect": "^3.14.4",
-    "typescript": "^5.8.2"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xayan/ast-outline-mcp.git"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "fastmcp": "^1.21.0",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.17.24",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">=18.0.0"
