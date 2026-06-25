@@ -1,7 +1,7 @@
 import { FastMCP } from "fastmcp";
+import { registerPrompts } from "../core/prompts.js";
 import { registerResources } from "../core/resources.js";
 import { registerTools } from "../core/tools.js";
-import { registerPrompts } from "../core/prompts.js";
 
 // Create and start the MCP server
 async function startServer() {
@@ -16,7 +16,7 @@ async function startServer() {
     registerTools(server);
     registerPrompts(server);
 
-    console.error("ast-outline MCP server initialized");
+    console.info("ast-outline MCP server initialized");
     return server;
   } catch (error) {
     console.error("Failed to initialize server:", error);
@@ -25,4 +25,3 @@ async function startServer() {
 }
 
 export default startServer;
- 
