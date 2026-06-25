@@ -17,23 +17,17 @@ uv tool install ast-outline
 
 ## Installation
 
+### Run via npx (no install needed)
+
 ```bash
-npm install
-npm run build
+npx ast-outline-mcp
 ```
 
-## Usage
-
-### Stdio transport (default)
+### Install globally
 
 ```bash
-npm start
-```
-
-### HTTP/SSE transport
-
-```bash
-npm run start:http
+npm install -g ast-outline-mcp
+ast-outline-mcp
 ```
 
 ### MCP Client Configuration
@@ -44,11 +38,19 @@ Add to your MCP client config (e.g., Claude Desktop):
 {
   "mcpServers": {
     "ast-outline": {
-      "command": "node",
-      "args": ["path/to/ast-outline-mcp/dist/index.js"]
+      "command": "npx",
+      "args": ["ast-outline-mcp"]
     }
   }
 }
+```
+
+### Local development
+
+```bash
+npm install
+npm run build
+npm start
 ```
 
 ## Tools
