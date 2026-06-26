@@ -77,5 +77,11 @@ echo -e "\n${BOLD}Fetching new version tag...${NC}"
 git fetch --tags origin 2>/dev/null
 LATEST_TAG=$(git tag --sort=-version:refname | head -1)
 
+# --- 7. git pull ---
+echo -e "\n${BOLD}Pulling latest changes...${NC}"
+git pull
+
+# --- 8. Report ---
+
 echo ""
 echo -e "${GREEN}${BOLD}✅ Published!${NC} ${BOLD}New version: ${CYAN}${LATEST_TAG}${NC}${BOLD}${NC}"
