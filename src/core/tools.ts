@@ -11,9 +11,9 @@ export function registerTools(server: FastMCP): void {
   // Outline tool - structural outline of files/directories
   server.addTool({
     name: "outline",
-    description: "Get a structural outline of one or more files or directories. " + "Returns signatures with line ranges (no bodies). ",
+    description: "Get a structural outline of a file or directory. " + "Returns signatures with line ranges (no bodies). ",
     parameters: z.object({
-      paths: z.union([z.string(), z.array(z.string())]).describe("Absolute paths"),
+      path: z.string().describe("Absolute path"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       imports: z.boolean().optional().describe("Include import/use/using statements"),
       noPrivate: z.boolean().optional().describe("Exclude private members"),
@@ -22,8 +22,7 @@ export function registerTools(server: FastMCP): void {
       noAttrs: z.boolean().optional().describe("Exclude attributes/decorators"),
     }),
     execute: async (params) => {
-      const paths = typeof params.paths === "string" ? [params.paths] : params.paths;
-      const result = await service.outline(paths, {
+      const result = await service.outline([params.path], {
         json: params.json,
         imports: params.imports,
         noPrivate: params.noPrivate,
@@ -46,12 +45,11 @@ export function registerTools(server: FastMCP): void {
       "Each file gets a size label and token estimate. " +
       "Type headers carry inheritance and decorators.",
     parameters: z.object({
-      paths: z.union([z.string(), z.array(z.string())]).describe("Absolute paths to directories"),
+      path: z.string().describe("Absolute path to directory"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
     }),
     execute: async (params) => {
-      const paths = typeof params.paths === "string" ? [params.paths] : params.paths;
-      const result = await service.digest(paths, {
+      const result = await service.digest([params.path], {
         json: params.json,
       });
       if (result.exitCode !== 0 && !result.stdout) {
@@ -70,13 +68,12 @@ export function registerTools(server: FastMCP): void {
       "Use --signature to get header only.",
     parameters: z.object({
       file: z.string().describe("Absolute path to the file"),
-      symbols: z.union([z.string(), z.array(z.string())]).describe("Symbol names to extract"),
+      symbols: z.array(z.string()).describe("Symbol names to extract"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       signature: z.boolean().optional().describe("Return header/signature only, no body"),
     }),
     execute: async (params) => {
-      const symbols = typeof params.symbols === "string" ? [params.symbols] : params.symbols;
-      const result = await service.show(params.file, symbols, {
+      const result = await service.show(params.file, params.symbols, {
         json: params.json,
         signature: params.signature,
       });
@@ -91,12 +88,12 @@ export function registerTools(server: FastMCP): void {
   server.addTool({
     name: "grep",
     description:
-      "AST-aware structural search across files and directories. " +
+      "AST-aware structural search across a file or directory. " +
       "Matches are grouped by enclosing class/function, with kind tags [def]/[import]. " +
       "Comment/string noise is filtered by default. Regex is auto-detected.",
     parameters: z.object({
       pattern: z.string().describe("Search pattern (literal or regex, auto-detected)"),
-      paths: z.union([z.string(), z.array(z.string())]).describe("Absolute paths to search"),
+      path: z.string().describe("Absolute path to search"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       kind: z.enum(["def", "call", "ref", "import"]).optional().describe("Narrow results by classification kind"),
       wordMatch: z.boolean().optional().describe("Match whole words only (-w)"),
@@ -106,8 +103,7 @@ export function registerTools(server: FastMCP): void {
       maxCount: z.number().optional().describe("Maximum number of matches per file (-m)"),
     }),
     execute: async (params) => {
-      const paths = typeof params.paths === "string" ? [params.paths] : params.paths;
-      const result = await service.grep(params.pattern, paths, {
+      const result = await service.grep(params.pattern, [params.path], {
         json: params.json,
         kind: params.kind,
         wordMatch: params.wordMatch,

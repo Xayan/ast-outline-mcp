@@ -55,7 +55,7 @@ describe("registerTools", () => {
 
       const tool = registeredTools.get("outline")!;
       const result = await tool.execute({
-        paths: ["src/main.py"],
+        path: "src/main.py",
         json: true,
         imports: true,
         noPrivate: false,
@@ -80,7 +80,7 @@ describe("registerTools", () => {
       });
 
       const tool = registeredTools.get("outline")!;
-      const result = await tool.execute({ paths: ["missing.py"] });
+      const result = await tool.execute({ path: "missing.py" });
       expect(result).toBe("Error (exit 1): file not found");
     });
 
@@ -92,11 +92,11 @@ describe("registerTools", () => {
       });
 
       const tool = registeredTools.get("outline")!;
-      const result = await tool.execute({ paths: ["empty/"] });
+      const result = await tool.execute({ path: "empty/" });
       expect(result).toBe("# note: no supported files found");
     });
 
-    it("accepts paths as a single string", async () => {
+    it("works with path param", async () => {
       mockService.outline.mockResolvedValue({
         stdout: "class Foo\n  def bar\n",
         stderr: "",
@@ -105,7 +105,7 @@ describe("registerTools", () => {
 
       const tool = registeredTools.get("outline")!;
       const result = await tool.execute({
-        paths: "src/main.py",
+        path: "src/main.py",
         json: true,
       });
 
@@ -130,13 +130,13 @@ describe("registerTools", () => {
       });
 
       const tool = registeredTools.get("digest")!;
-      const result = await tool.execute({ paths: ["src/"], json: false });
+      const result = await tool.execute({ path: "src/", json: false });
 
       expect(mockService.digest).toHaveBeenCalledWith(["src/"], { json: false });
       expect(result).toContain("[medium]");
     });
 
-    it("accepts paths as a single string", async () => {
+    it("works with path param", async () => {
       mockService.digest.mockResolvedValue({
         stdout: "[medium] src/main.py (~200 tokens)",
         stderr: "",
@@ -144,7 +144,7 @@ describe("registerTools", () => {
       });
 
       const tool = registeredTools.get("digest")!;
-      const result = await tool.execute({ paths: "src/", json: true });
+      const result = await tool.execute({ path: "src/", json: true });
 
       expect(mockService.digest).toHaveBeenCalledWith(["src/"], { json: true });
       expect(result).toContain("[medium]");
@@ -173,7 +173,7 @@ describe("registerTools", () => {
       expect(result).toContain("TakeDamage");
     });
 
-    it("accepts symbols as a single string", async () => {
+    it("works with symbols array", async () => {
       mockService.show.mockResolvedValue({
         stdout: "def TakeDamage(self, amount):\n    self.hp -= amount\n",
         stderr: "",
@@ -183,7 +183,7 @@ describe("registerTools", () => {
       const tool = registeredTools.get("show")!;
       const result = await tool.execute({
         file: "Player.py",
-        symbols: "TakeDamage",
+        symbols: ["TakeDamage"],
       });
 
       expect(mockService.show).toHaveBeenCalledWith("Player.py", ["TakeDamage"], {
@@ -205,7 +205,7 @@ describe("registerTools", () => {
       const tool = registeredTools.get("grep")!;
       const result = await tool.execute({
         pattern: "handle_request",
-        paths: ["src/"],
+        path: "src/",
         kind: "def",
         wordMatch: true,
       });
@@ -222,7 +222,7 @@ describe("registerTools", () => {
       expect(result).toContain("[def]");
     });
 
-    it("accepts paths as a single string", async () => {
+    it("works with path param", async () => {
       mockService.grep.mockResolvedValue({
         stdout: "src/main.py:10 [def] handle_request\n",
         stderr: "",
@@ -232,7 +232,7 @@ describe("registerTools", () => {
       const tool = registeredTools.get("grep")!;
       const result = await tool.execute({
         pattern: "handle_request",
-        paths: "src/",
+        path: "src/",
         kind: "def",
       });
 
