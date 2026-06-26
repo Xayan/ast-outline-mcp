@@ -55,7 +55,7 @@ npm start
 
 ## Tools
 
-### `ast_outline`
+### `outline`
 
 Get a structural outline of one or more files or directories. Returns signatures with line ranges (no bodies).
 
@@ -68,7 +68,7 @@ Get a structural outline of one or more files or directories. Returns signatures
 - `noDocs` (boolean) — Exclude documentation comments
 - `noAttrs` (boolean) — Exclude attributes/decorators
 
-### `ast_digest`
+### `digest`
 
 Get a compact one-page module map of a directory. Each file gets a size label and token estimate.
 
@@ -76,7 +76,7 @@ Get a compact one-page module map of a directory. Each file gets a size label an
 - `paths` (string[], required) — Directory paths to digest
 - `json` (boolean) — Return machine-readable JSON output
 
-### `ast_show`
+### `show`
 
 Extract the full source body of one or more symbols from a file.
 
@@ -86,7 +86,7 @@ Extract the full source body of one or more symbols from a file.
 - `json` (boolean) — Return machine-readable JSON output
 - `signature` (boolean) — Return header/signature only, no body
 
-### `ast_grep`
+### `grep`
 
 AST-aware structural search across files. Matches grouped by enclosing class/function.
 

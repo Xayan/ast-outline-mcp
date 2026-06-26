@@ -16,12 +16,8 @@ jest.mock("../src/core/services/ast-outline-service", () => {
   };
 });
 
-import { AstOutlineService } from "../src/core/services/ast-outline-service";
-
 // Get the mock service instance
-const { __mockService: mockService } = jest.requireMock(
-  "../src/core/services/ast-outline-service"
-) as { __mockService: Record<string, jest.Mock> };
+const { __mockService: mockService } = jest.requireMock("../src/core/services/ast-outline-service") as { __mockService: Record<string, jest.Mock> };
 
 describe("registerTools", () => {
   let server: FastMCP;
@@ -43,13 +39,13 @@ describe("registerTools", () => {
 
   it("registers all four tools", () => {
     expect(server.addTool).toHaveBeenCalledTimes(4);
-    expect(registeredTools.has("ast_outline")).toBe(true);
-    expect(registeredTools.has("ast_digest")).toBe(true);
-    expect(registeredTools.has("ast_show")).toBe(true);
-    expect(registeredTools.has("ast_grep")).toBe(true);
+    expect(registeredTools.has("outline")).toBe(true);
+    expect(registeredTools.has("digest")).toBe(true);
+    expect(registeredTools.has("show")).toBe(true);
+    expect(registeredTools.has("grep")).toBe(true);
   });
 
-  describe("ast_outline tool", () => {
+  describe("outline tool", () => {
     it("calls service.outline with correct params", async () => {
       mockService.outline.mockResolvedValue({
         stdout: "class Foo\n  def bar\n",
@@ -57,7 +53,7 @@ describe("registerTools", () => {
         exitCode: 0,
       });
 
-      const tool = registeredTools.get("ast_outline")!;
+      const tool = registeredTools.get("outline")!;
       const result = await tool.execute({
         paths: ["src/main.py"],
         json: true,
@@ -83,7 +79,7 @@ describe("registerTools", () => {
         exitCode: 1,
       });
 
-      const tool = registeredTools.get("ast_outline")!;
+      const tool = registeredTools.get("outline")!;
       const result = await tool.execute({ paths: ["missing.py"] });
       expect(result).toBe("Error (exit 1): file not found");
     });
@@ -95,13 +91,13 @@ describe("registerTools", () => {
         exitCode: 0,
       });
 
-      const tool = registeredTools.get("ast_outline")!;
+      const tool = registeredTools.get("outline")!;
       const result = await tool.execute({ paths: ["empty/"] });
       expect(result).toBe("# note: no supported files found");
     });
   });
 
-  describe("ast_digest tool", () => {
+  describe("digest tool", () => {
     it("calls service.digest with correct params", async () => {
       mockService.digest.mockResolvedValue({
         stdout: "[medium] src/main.py (~200 tokens)\n  class App\n",
@@ -109,7 +105,7 @@ describe("registerTools", () => {
         exitCode: 0,
       });
 
-      const tool = registeredTools.get("ast_digest")!;
+      const tool = registeredTools.get("digest")!;
       const result = await tool.execute({ paths: ["src/"], json: false });
 
       expect(mockService.digest).toHaveBeenCalledWith(["src/"], { json: false });
@@ -117,7 +113,7 @@ describe("registerTools", () => {
     });
   });
 
-  describe("ast_show tool", () => {
+  describe("show tool", () => {
     it("calls service.show with correct params", async () => {
       mockService.show.mockResolvedValue({
         stdout: "def TakeDamage(self, amount):\n    self.hp -= amount\n",
@@ -125,7 +121,7 @@ describe("registerTools", () => {
         exitCode: 0,
       });
 
-      const tool = registeredTools.get("ast_show")!;
+      const tool = registeredTools.get("show")!;
       const result = await tool.execute({
         file: "Player.py",
         symbols: ["TakeDamage"],
@@ -140,7 +136,7 @@ describe("registerTools", () => {
     });
   });
 
-  describe("ast_grep tool", () => {
+  describe("grep tool", () => {
     it("calls service.grep with correct params", async () => {
       mockService.grep.mockResolvedValue({
         stdout: "src/main.py:10 [def] handle_request\n",
@@ -148,7 +144,7 @@ describe("registerTools", () => {
         exitCode: 0,
       });
 
-      const tool = registeredTools.get("ast_grep")!;
+      const tool = registeredTools.get("grep")!;
       const result = await tool.execute({
         pattern: "handle_request",
         paths: ["src/"],

@@ -8,11 +8,9 @@ describe("registerPrompts", () => {
   beforeEach(() => {
     registeredPrompts = new Map();
     server = {
-      addPrompt: jest.fn(
-        (prompt: { name: string; arguments: unknown[]; load: Function }) => {
-          registeredPrompts.set(prompt.name, prompt);
-        }
-      ),
+      addPrompt: jest.fn((prompt: { name: string; arguments: unknown[]; load: Function }) => {
+        registeredPrompts.set(prompt.name, prompt);
+      }),
     } as unknown as FastMCP;
 
     registerPrompts(server);
@@ -27,9 +25,9 @@ describe("registerPrompts", () => {
     const prompt = registeredPrompts.get("explore_codebase")!;
     const result = await prompt.load({ directory: "/my/project" });
     expect(result).toContain("/my/project");
-    expect(result).toContain("ast_digest");
-    expect(result).toContain("ast_outline");
-    expect(result).toContain("ast_grep");
-    expect(result).toContain("ast_show");
+    expect(result).toContain("digest");
+    expect(result).toContain("outline");
+    expect(result).toContain("grep");
+    expect(result).toContain("show");
   });
 });

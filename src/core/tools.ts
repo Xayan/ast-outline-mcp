@@ -10,11 +10,10 @@ const service = new AstOutlineService();
 export function registerTools(server: FastMCP) {
   // Outline tool - structural outline of files/directories
   server.addTool({
-    name: "ast_outline",
+    name: "outline",
     description:
       "Get a structural outline of one or more files or directories. " +
-      "Returns signatures with line ranges (no bodies). " +
-      "Useful for understanding code structure without reading full files.",
+      "Returns signatures with line ranges (no bodies). ",
     parameters: z.object({
       paths: z.array(z.string()).min(1).describe("File or directory paths to outline"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
@@ -42,7 +41,7 @@ export function registerTools(server: FastMCP) {
 
   // Digest tool - compact module map
   server.addTool({
-    name: "ast_digest",
+    name: "digest",
     description:
       "Get a compact one-page module map of a directory. " +
       "Each file gets a size label ([tiny]/[medium]/[large]/[huge]) and token estimate. " +
@@ -64,7 +63,7 @@ export function registerTools(server: FastMCP) {
 
   // Show tool - extract symbol bodies
   server.addTool({
-    name: "ast_show",
+    name: "show",
     description:
       "Extract the full source body of one or more symbols from a file. " +
       "Supports suffix matching (e.g., 'Foo.Bar' matches '*.Foo.Bar'). " +
@@ -89,7 +88,7 @@ export function registerTools(server: FastMCP) {
 
   // Grep tool - AST-aware structural search
   server.addTool({
-    name: "ast_grep",
+    name: "grep",
     description:
       "AST-aware structural search across files. " +
       "Matches are grouped by enclosing class/function, with kind tags [def]/[import]. " +
