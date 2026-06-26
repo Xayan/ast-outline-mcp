@@ -46,7 +46,7 @@ describe("registerTools", () => {
   });
 
   describe("outline tool", () => {
-    it("calls service.outline with correct params", async () => {
+    it("calls service.outline with correct params (array)", async () => {
       mockService.outline.mockResolvedValue({
         stdout: "class Foo\n  def bar\n",
         stderr: "",
@@ -95,10 +95,34 @@ describe("registerTools", () => {
       const result = await tool.execute({ paths: ["empty/"] });
       expect(result).toBe("# note: no supported files found");
     });
+
+    it("accepts paths as a single string", async () => {
+      mockService.outline.mockResolvedValue({
+        stdout: "class Foo\n  def bar\n",
+        stderr: "",
+        exitCode: 0,
+      });
+
+      const tool = registeredTools.get("outline")!;
+      const result = await tool.execute({
+        paths: "src/main.py",
+        json: true,
+      });
+
+      expect(mockService.outline).toHaveBeenCalledWith(["src/main.py"], {
+        json: true,
+        imports: undefined,
+        noPrivate: undefined,
+        noFields: undefined,
+        noDocs: undefined,
+        noAttrs: undefined,
+      });
+      expect(result).toBe("class Foo\n  def bar\n");
+    });
   });
 
   describe("digest tool", () => {
-    it("calls service.digest with correct params", async () => {
+    it("calls service.digest with correct params (array)", async () => {
       mockService.digest.mockResolvedValue({
         stdout: "[medium] src/main.py (~200 tokens)\n  class App\n",
         stderr: "",
@@ -111,10 +135,24 @@ describe("registerTools", () => {
       expect(mockService.digest).toHaveBeenCalledWith(["src/"], { json: false });
       expect(result).toContain("[medium]");
     });
+
+    it("accepts paths as a single string", async () => {
+      mockService.digest.mockResolvedValue({
+        stdout: "[medium] src/main.py (~200 tokens)",
+        stderr: "",
+        exitCode: 0,
+      });
+
+      const tool = registeredTools.get("digest")!;
+      const result = await tool.execute({ paths: "src/", json: true });
+
+      expect(mockService.digest).toHaveBeenCalledWith(["src/"], { json: true });
+      expect(result).toContain("[medium]");
+    });
   });
 
   describe("show tool", () => {
-    it("calls service.show with correct params", async () => {
+    it("calls service.show with correct params (array)", async () => {
       mockService.show.mockResolvedValue({
         stdout: "def TakeDamage(self, amount):\n    self.hp -= amount\n",
         stderr: "",
@@ -134,10 +172,30 @@ describe("registerTools", () => {
       });
       expect(result).toContain("TakeDamage");
     });
+
+    it("accepts symbols as a single string", async () => {
+      mockService.show.mockResolvedValue({
+        stdout: "def TakeDamage(self, amount):\n    self.hp -= amount\n",
+        stderr: "",
+        exitCode: 0,
+      });
+
+      const tool = registeredTools.get("show")!;
+      const result = await tool.execute({
+        file: "Player.py",
+        symbols: "TakeDamage",
+      });
+
+      expect(mockService.show).toHaveBeenCalledWith("Player.py", ["TakeDamage"], {
+        json: undefined,
+        signature: undefined,
+      });
+      expect(result).toContain("TakeDamage");
+    });
   });
 
   describe("grep tool", () => {
-    it("calls service.grep with correct params", async () => {
+    it("calls service.grep with correct params (array)", async () => {
       mockService.grep.mockResolvedValue({
         stdout: "src/main.py:10 [def] handle_request\n",
         stderr: "",
@@ -156,6 +214,32 @@ describe("registerTools", () => {
         json: undefined,
         kind: "def",
         wordMatch: true,
+        caseInsensitive: undefined,
+        filesOnly: undefined,
+        count: undefined,
+        maxCount: undefined,
+      });
+      expect(result).toContain("[def]");
+    });
+
+    it("accepts paths as a single string", async () => {
+      mockService.grep.mockResolvedValue({
+        stdout: "src/main.py:10 [def] handle_request\n",
+        stderr: "",
+        exitCode: 0,
+      });
+
+      const tool = registeredTools.get("grep")!;
+      const result = await tool.execute({
+        pattern: "handle_request",
+        paths: "src/",
+        kind: "def",
+      });
+
+      expect(mockService.grep).toHaveBeenCalledWith("handle_request", ["src/"], {
+        json: undefined,
+        kind: "def",
+        wordMatch: undefined,
         caseInsensitive: undefined,
         filesOnly: undefined,
         count: undefined,

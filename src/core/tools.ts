@@ -25,7 +25,7 @@ export function registerTools(server: FastMCP) {
     name: "outline",
     description: "Get a structural outline of one or more files or directories. " + "Returns signatures with line ranges (no bodies). ",
     parameters: z.object({
-      paths: z.array(z.string()).min(1).describe("File or directory paths to outline"),
+      paths: z.union([z.string(), z.array(z.string())]).describe("File or directory paths [str|arr]"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       imports: z.boolean().optional().describe("Include import/use/using statements"),
       noPrivate: z.boolean().optional().describe("Exclude private members"),
@@ -34,7 +34,8 @@ export function registerTools(server: FastMCP) {
       noAttrs: z.boolean().optional().describe("Exclude attributes/decorators"),
     }),
     execute: async (params) => {
-      const result = await service.outline(params.paths, {
+      const paths = typeof params.paths === "string" ? [params.paths] : params.paths;
+      const result = await service.outline(paths, {
         json: params.json,
         imports: params.imports,
         noPrivate: params.noPrivate,
@@ -54,14 +55,15 @@ export function registerTools(server: FastMCP) {
     name: "digest",
     description:
       "Get a compact one-page module map of a directory. " +
-      "Each file gets a size label ([tiny]/[medium]/[large]/[huge]) and token estimate. " +
+      "Each file gets a size label and token estimate. " +
       "Type headers carry inheritance and decorators.",
     parameters: z.object({
-      paths: z.array(z.string()).min(1).describe("Directory paths to digest"),
+      paths: z.union([z.string(), z.array(z.string())]).describe("Directory paths [str|arr]"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
     }),
     execute: async (params) => {
-      const result = await service.digest(params.paths, {
+      const paths = typeof params.paths === "string" ? [params.paths] : params.paths;
+      const result = await service.digest(paths, {
         json: params.json,
       });
       if (result.exitCode !== 0 && !result.stdout) {
@@ -80,12 +82,13 @@ export function registerTools(server: FastMCP) {
       "Use --signature to get header only.",
     parameters: z.object({
       file: z.string().describe("File path to extract symbols from"),
-      symbols: z.array(z.string()).min(1).describe("Symbol names to extract"),
+      symbols: z.union([z.string(), z.array(z.string())]).describe("Symbol names to extract [str|arr]"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       signature: z.boolean().optional().describe("Return header/signature only, no body"),
     }),
     execute: async (params) => {
-      const result = await service.show(params.file, params.symbols, {
+      const symbols = typeof params.symbols === "string" ? [params.symbols] : params.symbols;
+      const result = await service.show(params.file, symbols, {
         json: params.json,
         signature: params.signature,
       });
@@ -105,7 +108,7 @@ export function registerTools(server: FastMCP) {
       "Comment/string noise is filtered by default. Regex is auto-detected.",
     parameters: z.object({
       pattern: z.string().describe("Search pattern (literal or regex, auto-detected)"),
-      paths: z.array(z.string()).min(1).describe("File or directory paths to search"),
+      paths: z.union([z.string(), z.array(z.string())]).describe("File or directory paths [str|arr]"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       kind: z.enum(["def", "call", "ref", "import"]).optional().describe("Narrow results by classification kind"),
       wordMatch: z.boolean().optional().describe("Match whole words only (-w)"),
@@ -115,7 +118,8 @@ export function registerTools(server: FastMCP) {
       maxCount: z.number().optional().describe("Maximum number of matches per file (-m)"),
     }),
     execute: async (params) => {
-      const result = await service.grep(params.pattern, params.paths, {
+      const paths = typeof params.paths === "string" ? [params.paths] : params.paths;
+      const result = await service.grep(params.pattern, paths, {
         json: params.json,
         kind: params.kind,
         wordMatch: params.wordMatch,
