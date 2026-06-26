@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version_type:
-        description: 'Version type (prerelease, prepatch, patch, preminor, minor, premajor, major)'
+        description: "Version type (prerelease, prepatch, patch, preminor, minor, premajor, major)"
         required: true
-        default: 'patch'
+        default: "patch"
         type: choice
         options:
           - prerelease
@@ -17,13 +17,13 @@ on:
           - premajor
           - major
       custom_version:
-        description: 'Custom version (leave empty to use version_type)'
+        description: "Custom version (leave empty to use version_type)"
         required: false
         type: string
       dist_tag:
-        description: 'npm distribution tag (latest, next, beta, etc)'
+        description: "npm distribution tag (latest, next, beta, etc)"
         required: false
-        default: 'latest'
+        default: "latest"
         type: string
 
 jobs:
@@ -35,24 +35,19 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_GITHUB }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '18.x'
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
       - name: Install dependencies
-        run: bun install
+        run: npm install
 
       - name: Configure Git
         run: |
@@ -74,20 +69,13 @@ jobs:
           fi
           echo "New version: ${{ env.VERSION }}"
 
-      - name: Generate Changelog
-        run: |
-          # Generate the full changelog
-          npm run changelog
-          # Generate release notes for just this version
-          npm run changelog:latest
-
       - name: Build project
-        run: bun run build && bun run build:http
+        run: npm run build
 
       - name: Commit and push changes
         run: |
-          git pull origin main --no-edit
-          git add package.json CHANGELOG.md
+          git pull origin master --no-edit
+          git add package.json
           git commit -m "Bump version to v${{ env.VERSION }}"
           git push --force-with-lease
 
@@ -106,12 +94,11 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           name: Release v${{ env.VERSION }}
-          body_path: RELEASE_NOTES.md
-          generate_release_notes: false
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
 
       - name: Publish to npm
         run: npm publish --access public --provenance --tag ${{ github.event.inputs.dist_tag || 'latest' }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
