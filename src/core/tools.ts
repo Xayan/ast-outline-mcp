@@ -14,7 +14,6 @@ export function registerTools(server: FastMCP): void {
     description: "Get a structural outline of a file or directory. " + "Returns signatures with line ranges (no bodies). ",
     parameters: z.object({
       path: z.string().describe("Absolute path"),
-      json: z.boolean().optional().describe("Return machine-readable JSON output"),
       imports: z.boolean().optional().describe("Include import/use/using statements"),
       noPrivate: z.boolean().optional().describe("Exclude private members"),
       noFields: z.boolean().optional().describe("Exclude fields/properties"),
@@ -23,7 +22,6 @@ export function registerTools(server: FastMCP): void {
     }),
     execute: async (params) => {
       const result = await service.outline([params.path], {
-        json: params.json,
         imports: params.imports,
         noPrivate: params.noPrivate,
         noFields: params.noFields,
@@ -46,12 +44,9 @@ export function registerTools(server: FastMCP): void {
       "Type headers carry inheritance and decorators.",
     parameters: z.object({
       path: z.string().describe("Absolute path to directory"),
-      json: z.boolean().optional().describe("Return machine-readable JSON output"),
     }),
     execute: async (params) => {
-      const result = await service.digest([params.path], {
-        json: params.json,
-      });
+      const result = await service.digest([params.path], {});
       if (result.exitCode !== 0 && !result.stdout) {
         return `Error (exit ${result.exitCode}): ${result.stderr}`;
       }
@@ -69,12 +64,10 @@ export function registerTools(server: FastMCP): void {
     parameters: z.object({
       file: z.string().describe("Absolute path to the file"),
       symbols: z.array(z.string()).describe("Symbol names to extract"),
-      json: z.boolean().optional().describe("Return machine-readable JSON output"),
       signature: z.boolean().optional().describe("Return header/signature only, no body"),
     }),
     execute: async (params) => {
       const result = await service.show(params.file, params.symbols, {
-        json: params.json,
         signature: params.signature,
       });
       if (result.exitCode !== 0 && !result.stdout) {
@@ -94,7 +87,6 @@ export function registerTools(server: FastMCP): void {
     parameters: z.object({
       pattern: z.string().describe("Search pattern (literal or regex, auto-detected)"),
       path: z.string().describe("Absolute path to search"),
-      json: z.boolean().optional().describe("Return machine-readable JSON output"),
       kind: z.enum(["def", "call", "ref", "import"]).optional().describe("Narrow results by classification kind"),
       wordMatch: z.boolean().optional().describe("Match whole words only (-w)"),
       caseInsensitive: z.boolean().optional().describe("Case-insensitive matching (-i)"),
@@ -104,7 +96,6 @@ export function registerTools(server: FastMCP): void {
     }),
     execute: async (params) => {
       const result = await service.grep(params.pattern, [params.path], {
-        json: params.json,
         kind: params.kind,
         wordMatch: params.wordMatch,
         caseInsensitive: params.caseInsensitive,

@@ -23,9 +23,7 @@
     "lint": "eslint src tests --max-warnings 0",
     "lint:fix": "eslint src tests --fix",
     "prepare": "husky",
-    "publish:patch": "git push && gh workflow run release-publish.yml --field version_type=patch && git pull",
-    "publish:minor": "git push && gh workflow run release-publish.yml --field version_type=minor && git pull",
-    "publish:major": "git push && gh workflow run release-publish.yml --field version_type=major && git pull"
+    "release": "./scripts/release.sh"
   },
   "keywords": [
     "mcp",

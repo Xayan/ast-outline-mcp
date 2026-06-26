@@ -62,7 +62,6 @@ describe("registerTools", () => {
       });
 
       expect(mockService.outline).toHaveBeenCalledWith(["src/main.py"], {
-        json: true,
         imports: true,
         noPrivate: false,
         noFields: undefined,
@@ -106,11 +105,9 @@ describe("registerTools", () => {
       const tool = registeredTools.get("outline")!;
       const result = await tool.execute({
         path: "src/main.py",
-        json: true,
       });
 
       expect(mockService.outline).toHaveBeenCalledWith(["src/main.py"], {
-        json: true,
         imports: undefined,
         noPrivate: undefined,
         noFields: undefined,
@@ -130,9 +127,9 @@ describe("registerTools", () => {
       });
 
       const tool = registeredTools.get("digest")!;
-      const result = await tool.execute({ path: "src/", json: false });
+      const result = await tool.execute({ path: "src/" });
 
-      expect(mockService.digest).toHaveBeenCalledWith(["src/"], { json: false });
+      expect(mockService.digest).toHaveBeenCalledWith(["src/"], {});
       expect(result).toContain("[medium]");
     });
 
@@ -144,9 +141,9 @@ describe("registerTools", () => {
       });
 
       const tool = registeredTools.get("digest")!;
-      const result = await tool.execute({ path: "src/", json: true });
+      const result = await tool.execute({ path: "src/" });
 
-      expect(mockService.digest).toHaveBeenCalledWith(["src/"], { json: true });
+      expect(mockService.digest).toHaveBeenCalledWith(["src/"], {});
       expect(result).toContain("[medium]");
     });
   });
@@ -167,7 +164,6 @@ describe("registerTools", () => {
       });
 
       expect(mockService.show).toHaveBeenCalledWith("Player.py", ["TakeDamage"], {
-        json: undefined,
         signature: false,
       });
       expect(result).toContain("TakeDamage");
@@ -187,7 +183,6 @@ describe("registerTools", () => {
       });
 
       expect(mockService.show).toHaveBeenCalledWith("Player.py", ["TakeDamage"], {
-        json: undefined,
         signature: undefined,
       });
       expect(result).toContain("TakeDamage");
@@ -211,7 +206,6 @@ describe("registerTools", () => {
       });
 
       expect(mockService.grep).toHaveBeenCalledWith("handle_request", ["src/"], {
-        json: undefined,
         kind: "def",
         wordMatch: true,
         caseInsensitive: undefined,
@@ -237,7 +231,6 @@ describe("registerTools", () => {
       });
 
       expect(mockService.grep).toHaveBeenCalledWith("handle_request", ["src/"], {
-        json: undefined,
         kind: "def",
         wordMatch: undefined,
         caseInsensitive: undefined,
