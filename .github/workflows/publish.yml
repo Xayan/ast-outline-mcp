@@ -29,6 +29,9 @@ jobs:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
 
+      - name: Set version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: npm ci
 
@@ -39,16 +42,15 @@ jobs:
         id: version
         run: echo "VERSION=$(node -p 'require(\"./package.json\").version')" >> $GITHUB_ENV
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ env.VERSION }}
-          name: Release v${{ env.VERSION }}
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
-
       - name: Publish to npm
         run: npm publish --access public --provenance --tag ${{ github.event.inputs.dist_tag || 'latest' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "v${{ env.VERSION }}" \
+            --generate-notes \
+            --title "Release v${{ env.VERSION }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}

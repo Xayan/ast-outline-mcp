@@ -75,17 +75,12 @@ else
   echo -e "${GREEN}✓ Created version commit${NC}"
 fi
 
-# --- 6. Tag ---
-git tag -a "v${NEW_VERSION}" -m "Release v${NEW_VERSION}"
-echo -e "${GREEN}✓ Tagged v${NEW_VERSION}${NC}"
-
-# --- 7. Push ---
-echo -e "\n${BOLD}Pushing commits and tags...${NC}"
+# --- 6. Push ---
+echo -e "\n${BOLD}Pushing commit...${NC}"
 git push origin HEAD
-git push origin --tags
 echo -e "${GREEN}✓ Pushed.${NC}"
 
-# --- 8. Trigger publish workflow ---
+# --- 7. Trigger publish workflow ---
 echo -e "\n${BOLD}Triggering GitHub Publish workflow...${NC}"
 GH_CMD=("gh" "workflow" "run" "publish.yml" \
   "--field" "dist_tag=${dist_tag}")
@@ -96,14 +91,14 @@ echo -e "${GREEN}✓ Workflow triggered.${NC}"
 
 sleep 2
 
-# --- 9. Watch and report ---
+# --- 8. Watch and report ---
 RUN_ID=$(gh run list --workflow=publish.yml --limit=1 \
   --json databaseId --jq '.[0].databaseId')
 echo -e "Run ID: ${CYAN}${RUN_ID}${NC}"
 
 gh run watch "$RUN_ID"
 
-# --- 10. Fetch tag ---
+# --- 9. Fetch tag ---
 echo -e "\n${BOLD}Fetching latest tag...${NC}"
 git fetch --tags 2>/dev/null
 LATEST_TAG=$(git tag --sort=-version:refname | head -1)
