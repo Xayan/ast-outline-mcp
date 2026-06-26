@@ -65,7 +65,7 @@ fi
 echo -e "${GREEN}✓ Version: $NEW_VERSION${NC}"
 
 # --- 5. Commit the version bump (amend if we committed in step 2) ---
-git add package.json
+git add package.json package-lock.json
 
 if [ "$COMMITTED" = true ]; then
   git commit --amend -m "v${NEW_VERSION}: ${COMMIT_MSG}"
