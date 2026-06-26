@@ -1,6 +1,6 @@
 {
   "name": "ast-outline-mcp",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "description": "MCP server for ast-outline - a tree-sitter-based CLI that provides structural code outlines, digests, symbol extraction, and AST-aware grep",
   "main": "dist/index.js",
