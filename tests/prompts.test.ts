@@ -3,12 +3,12 @@ import { registerPrompts } from "../src/core/prompts";
 
 describe("registerPrompts", () => {
   let server: FastMCP;
-  let registeredPrompts: Map<string, { arguments: unknown[]; load: Function }>;
+  let registeredPrompts: Map<string, { arguments: unknown[]; load: (...args: unknown[]) => Promise<string> }>;
 
   beforeEach(() => {
     registeredPrompts = new Map();
     server = {
-      addPrompt: jest.fn((prompt: { name: string; arguments: unknown[]; load: Function }) => {
+      addPrompt: jest.fn((prompt: { name: string; arguments: unknown[]; load: (...args: unknown[]) => Promise<string> }) => {
         registeredPrompts.set(prompt.name, prompt);
       }),
     } as unknown as FastMCP;

@@ -7,10 +7,10 @@ jest.mock("node:child_process", () => ({
 }));
 
 jest.mock("node:util", () => ({
-  promisify: (fn: Function) => {
+  promisify: (fn: (...args: unknown[]) => void) => {
     return (...args: unknown[]) => {
       return new Promise((resolve, reject) => {
-        (fn as Function)(...args, (err: Error | null, result: unknown) => {
+        fn(...args, (err: Error | null, result: unknown) => {
           if (err) reject(err);
           else resolve(result);
         });
@@ -31,7 +31,7 @@ describe("AstOutlineService", () => {
 
   function mockSuccess(stdout: string, stderr = "") {
     mockedExecFile.mockImplementation(
-      (_cmd: string, _args: string[], _opts: object, cb: Function) => {
+      (_cmd: string, _args: string[], _opts: object, cb: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
         cb(null, { stdout, stderr });
       }
     );
@@ -39,7 +39,7 @@ describe("AstOutlineService", () => {
 
   function mockError(stdout: string, stderr: string, code: number) {
     mockedExecFile.mockImplementation(
-      (_cmd: string, _args: string[], _opts: object, cb: Function) => {
+      (_cmd: string, _args: string[], _opts: object, cb: (err: Error | null, result?: { stdout: string; stderr: string }) => void) => {
         const error = new Error("Command failed") as Error & {
           stdout: string;
           stderr: string;
@@ -55,7 +55,7 @@ describe("AstOutlineService", () => {
 
   function mockNotFound() {
     mockedExecFile.mockImplementation(
-      (_cmd: string, _args: string[], _opts: object, cb: Function) => {
+      (_cmd: string, _args: string[], _opts: object, cb: (err: Error | null, result?: { stdout: string; stderr: string }) => void) => {
         const error = new Error("ENOENT") as Error & { code: string };
         error.code = "ENOENT";
         cb(error);

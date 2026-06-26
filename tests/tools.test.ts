@@ -21,7 +21,7 @@ const { __mockService: mockService } = jest.requireMock("../src/core/services/as
 
 describe("registerTools", () => {
   let server: FastMCP;
-  let registeredTools: Map<string, { parameters: unknown; execute: Function }>;
+  let registeredTools: Map<string, { parameters: unknown; execute: (...args: unknown[]) => Promise<unknown> }>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -29,7 +29,7 @@ describe("registerTools", () => {
 
     // Create a mock server that captures tool registrations
     server = {
-      addTool: jest.fn((tool: { name: string; parameters: unknown; execute: Function }) => {
+      addTool: jest.fn((tool: { name: string; parameters: unknown; execute: (...args: unknown[]) => Promise<unknown> }) => {
         registeredTools.set(tool.name, tool);
       }),
     } as unknown as FastMCP;
