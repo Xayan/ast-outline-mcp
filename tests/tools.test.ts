@@ -38,7 +38,7 @@ describe("registerTools", () => {
   });
 
   it("registers all four tools", () => {
-    expect(server.addTool).toHaveBeenCalledTimes(4);
+    expect(server.addTool).toHaveBeenCalledTimes(5);
     expect(registeredTools.has("outline")).toBe(true);
     expect(registeredTools.has("digest")).toBe(true);
     expect(registeredTools.has("show")).toBe(true);

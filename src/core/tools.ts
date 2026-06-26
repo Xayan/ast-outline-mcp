@@ -8,12 +8,22 @@ const service = new AstOutlineService();
  * Register all tools with the MCP server
  */
 export function registerTools(server: FastMCP) {
+  server.addTool({
+    name: "help",
+    description: "Get helpful usage information",
+    parameters: z.object({}),
+    execute: async () => {
+      const result = await service.help();
+      if (result.exitCode !== 0 && !result.stdout) {
+        return `Error (exit ${result.exitCode}): ${result.stderr}`;
+      }
+      return result.stdout || result.stderr;
+    },
+  });
   // Outline tool - structural outline of files/directories
   server.addTool({
     name: "outline",
-    description:
-      "Get a structural outline of one or more files or directories. " +
-      "Returns signatures with line ranges (no bodies). ",
+    description: "Get a structural outline of one or more files or directories. " + "Returns signatures with line ranges (no bodies). ",
     parameters: z.object({
       paths: z.array(z.string()).min(1).describe("File or directory paths to outline"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
@@ -97,10 +107,7 @@ export function registerTools(server: FastMCP) {
       pattern: z.string().describe("Search pattern (literal or regex, auto-detected)"),
       paths: z.array(z.string()).min(1).describe("File or directory paths to search"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
-      kind: z
-        .enum(["def", "call", "ref", "import"])
-        .optional()
-        .describe("Narrow results by classification kind"),
+      kind: z.enum(["def", "call", "ref", "import"]).optional().describe("Narrow results by classification kind"),
       wordMatch: z.boolean().optional().describe("Match whole words only (-w)"),
       caseInsensitive: z.boolean().optional().describe("Case-insensitive matching (-i)"),
       filesOnly: z.boolean().optional().describe("List matching files only (-l)"),

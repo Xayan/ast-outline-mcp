@@ -54,6 +54,10 @@ export class AstOutlineService {
     }
   }
 
+  async help(): Promise<CommandResult> {
+    return this.exec(["help"]);
+  }
+
   /**
    * Structural outline of one or more files/directories.
    * Signatures with line ranges, no bodies.
@@ -67,7 +71,7 @@ export class AstOutlineService {
       noFields?: boolean;
       noDocs?: boolean;
       noAttrs?: boolean;
-    } = {}
+    } = {},
   ): Promise<CommandResult> {
     const args = ["outline", ...paths];
     if (options.json) args.push("--json");
@@ -87,7 +91,7 @@ export class AstOutlineService {
     paths: string[],
     options: {
       json?: boolean;
-    } = {}
+    } = {},
   ): Promise<CommandResult> {
     const args = ["digest", ...paths];
     if (options.json) args.push("--json");
@@ -103,7 +107,7 @@ export class AstOutlineService {
     options: {
       json?: boolean;
       signature?: boolean;
-    } = {}
+    } = {},
   ): Promise<CommandResult> {
     const args = ["show", file, ...symbols];
     if (options.json) args.push("--json");
@@ -126,7 +130,7 @@ export class AstOutlineService {
       filesOnly?: boolean;
       count?: boolean;
       maxCount?: number;
-    } = {}
+    } = {},
   ): Promise<CommandResult> {
     const args = ["grep", pattern, ...paths];
     if (options.json) args.push("--json");
