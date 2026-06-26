@@ -74,12 +74,12 @@ echo -e "Run ID: ${CYAN}${RUN_ID}${NC}"
 gh run watch "$RUN_ID"
 
 echo -e "\n${BOLD}Fetching new version tag...${NC}"
-git fetch --tags origin 2>/dev/null
+git fetch --tags
 LATEST_TAG=$(git tag --sort=-version:refname | head -1)
 
 # --- 7. git pull ---
 echo -e "\n${BOLD}Pulling latest changes...${NC}"
-git pull
+git rebase origin/master
 
 # --- 8. Report ---
 
