@@ -3,7 +3,7 @@ import startServer from "./server.js";
 // Environment variables with default values
 const PORT = parseInt(process.env.PORT || "3001", 10);
 
-async function main() {
+async function main(): Promise<void> {
   try {
     // Create and initialize the FastMCP server
     const server = await startServer();

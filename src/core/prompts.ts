@@ -3,7 +3,7 @@ import { FastMCP } from "fastmcp";
 /**
  * Register all prompts with the MCP server
  */
-export function registerPrompts(server: FastMCP) {
+export function registerPrompts(server: FastMCP): void {
   server.addPrompt({
     name: "explore_codebase",
     description: "A prompt that guides an LLM to efficiently explore a codebase using ast-outline tools",

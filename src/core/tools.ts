@@ -7,7 +7,7 @@ const service = new AstOutlineService();
 /**
  * Register all tools with the MCP server
  */
-export function registerTools(server: FastMCP) {
+export function registerTools(server: FastMCP): void {
   // Outline tool - structural outline of files/directories
   server.addTool({
     name: "outline",

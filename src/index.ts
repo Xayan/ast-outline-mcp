@@ -2,7 +2,7 @@
 import startServer from "./server/server.js";
 
 // Start the server
-async function main() {
+async function main(): Promise<void> {
   try {
     const server = await startServer();
 

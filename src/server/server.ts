@@ -4,7 +4,7 @@ import { registerResources } from "../core/resources.js";
 import { registerTools } from "../core/tools.js";
 
 // Create and start the MCP server
-async function startServer() {
+async function startServer(): Promise<FastMCP> {
   try {
     const server = new FastMCP({
       name: "ast-outline-mcp",
