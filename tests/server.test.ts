@@ -23,7 +23,7 @@ describe("startServer", () => {
   it("registers tools, prompts, and resources", async () => {
     const server = await startServer();
     // 4 ast-outline tools
-    expect(server.addTool).toHaveBeenCalledTimes(5);
+    expect(server.addTool).toHaveBeenCalledTimes(4);
     // 1 prompt
     expect(server.addPrompt).toHaveBeenCalledTimes(1);
   });

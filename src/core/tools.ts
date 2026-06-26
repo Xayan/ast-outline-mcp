@@ -8,24 +8,12 @@ const service = new AstOutlineService();
  * Register all tools with the MCP server
  */
 export function registerTools(server: FastMCP) {
-  server.addTool({
-    name: "help",
-    description: "Get helpful usage information",
-    parameters: z.object({}),
-    execute: async () => {
-      const result = await service.help();
-      if (result.exitCode !== 0 && !result.stdout) {
-        return `Error (exit ${result.exitCode}): ${result.stderr}`;
-      }
-      return result.stdout || result.stderr;
-    },
-  });
   // Outline tool - structural outline of files/directories
   server.addTool({
     name: "outline",
     description: "Get a structural outline of one or more files or directories. " + "Returns signatures with line ranges (no bodies). ",
     parameters: z.object({
-      paths: z.union([z.string(), z.array(z.string())]).describe("File or directory paths [str|arr]"),
+      paths: z.union([z.string(), z.array(z.string())]).describe("Absolute paths"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       imports: z.boolean().optional().describe("Include import/use/using statements"),
       noPrivate: z.boolean().optional().describe("Exclude private members"),
@@ -58,7 +46,7 @@ export function registerTools(server: FastMCP) {
       "Each file gets a size label and token estimate. " +
       "Type headers carry inheritance and decorators.",
     parameters: z.object({
-      paths: z.union([z.string(), z.array(z.string())]).describe("Directory paths [str|arr]"),
+      paths: z.union([z.string(), z.array(z.string())]).describe("Absolute paths to directories"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
     }),
     execute: async (params) => {
@@ -81,8 +69,8 @@ export function registerTools(server: FastMCP) {
       "Supports suffix matching (e.g., 'Foo.Bar' matches '*.Foo.Bar'). " +
       "Use --signature to get header only.",
     parameters: z.object({
-      file: z.string().describe("File path to extract symbols from"),
-      symbols: z.union([z.string(), z.array(z.string())]).describe("Symbol names to extract [str|arr]"),
+      file: z.string().describe("Absolute path to the file"),
+      symbols: z.union([z.string(), z.array(z.string())]).describe("Symbol names to extract"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       signature: z.boolean().optional().describe("Return header/signature only, no body"),
     }),
@@ -103,12 +91,12 @@ export function registerTools(server: FastMCP) {
   server.addTool({
     name: "grep",
     description:
-      "AST-aware structural search across files. " +
+      "AST-aware structural search across files and directories. " +
       "Matches are grouped by enclosing class/function, with kind tags [def]/[import]. " +
       "Comment/string noise is filtered by default. Regex is auto-detected.",
     parameters: z.object({
       pattern: z.string().describe("Search pattern (literal or regex, auto-detected)"),
-      paths: z.union([z.string(), z.array(z.string())]).describe("File or directory paths [str|arr]"),
+      paths: z.union([z.string(), z.array(z.string())]).describe("Absolute paths to search"),
       json: z.boolean().optional().describe("Return machine-readable JSON output"),
       kind: z.enum(["def", "call", "ref", "import"]).optional().describe("Narrow results by classification kind"),
       wordMatch: z.boolean().optional().describe("Match whole words only (-w)"),
