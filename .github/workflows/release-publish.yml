@@ -72,11 +72,12 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Commit and push changes
+      - name: Amend last commit with version bump
         run: |
           git pull origin master --no-edit
           git add package.json
-          git commit -m "Bump version to v${{ env.VERSION }}"
+          ORIGINAL_MSG=$(git log -1 --pretty=%B)
+          git commit --amend -m "v${{ env.VERSION }}: ${ORIGINAL_MSG}"
           git push --force-with-lease
 
       - name: Create and push tag

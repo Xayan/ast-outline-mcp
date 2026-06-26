@@ -65,8 +65,9 @@ echo -e "\n${CYAN}Triggering:${NC} ${GH_CMD[*]}"
 "${GH_CMD[@]}"
 echo -e "${GREEN}✓ Workflow triggered.${NC}"
 
-# --- 6. Watch and report ---
 sleep 2
+
+# --- 6. Watch and report ---
 RUN_ID=$(gh run list --workflow=release-publish.yml --limit=1 \
   --json databaseId --jq '.[0].databaseId')
 echo -e "Run ID: ${CYAN}${RUN_ID}${NC}"
@@ -79,9 +80,10 @@ LATEST_TAG=$(git tag --sort=-version:refname | head -1)
 
 # --- 7. git pull ---
 echo -e "\n${BOLD}Pulling latest changes...${NC}"
-git rebase origin/master
+git pull
 
 # --- 8. Report ---
 
 echo ""
-echo -e "${GREEN}${BOLD}✅ Published!${NC} ${BOLD}New version: ${CYAN}${LATEST_TAG}${NC}${BOLD}${NC}"
+echo -e "  ✅ ${GREEN}${BOLD}Published!${NC}"
+echo -e "  ${BOLD}New version: ${CYAN}${LATEST_TAG}${NC}${BOLD}${NC}"
