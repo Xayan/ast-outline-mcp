@@ -18,13 +18,12 @@ describe("registerPrompts", () => {
 
   it("registers the explore_codebase prompt", () => {
     expect(server.addPrompt).toHaveBeenCalledTimes(1);
-    expect(registeredPrompts.has("explore_codebase")).toBe(true);
+    expect(registeredPrompts.has("explore-codebase")).toBe(true);
   });
 
   it("generates correct prompt text", async () => {
-    const prompt = registeredPrompts.get("explore_codebase")!;
-    const result = await prompt.load({ directory: "/my/project" });
-    expect(result).toContain("/my/project");
+    const prompt = registeredPrompts.get("explore-codebase")!;
+    const result = await prompt.load();
     expect(result).toContain("digest");
     expect(result).toContain("outline");
     expect(result).toContain("grep");
