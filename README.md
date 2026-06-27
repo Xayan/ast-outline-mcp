@@ -45,34 +45,26 @@ Add to your MCP client config (e.g., Claude Desktop):
 }
 ```
 
-### Local development
-
-```bash
-npm install
-npm run build
-npm start
-```
-
 ## Tools
+
+### `digest`
+
+Get a compact one-page module map of a directory. Each file gets a size label and token estimate. Recommended for initial overview of a codebase.
+
+**Parameters:**
+- `path` (string, required) — Directory path to digest
 
 ### `outline`
 
 Get a structural outline of one or more files or directories. Returns signatures with line ranges (no bodies).
 
 **Parameters:**
-- `paths` (string[], required) — File or directory paths to outline
+- `path` (string, required) — File or directory path to outline
 - `imports` (boolean) — Include import/use/using statements
 - `noPrivate` (boolean) — Exclude private members
 - `noFields` (boolean) — Exclude fields/properties
 - `noDocs` (boolean) — Exclude documentation comments
 - `noAttrs` (boolean) — Exclude attributes/decorators
-
-### `digest`
-
-Get a compact one-page module map of a directory. Each file gets a size label and token estimate.
-
-**Parameters:**
-- `paths` (string[], required) — Directory paths to digest
 
 ### `show`
 
@@ -89,7 +81,7 @@ AST-aware structural search across files. Matches grouped by enclosing class/fun
 
 **Parameters:**
 - `pattern` (string, required) — Search pattern (literal or regex, auto-detected)
-- `paths` (string[], required) — File or directory paths to search
+- `path` (string, required) — File or directory path to search
 - `kind` (enum: def|call|ref|import) — Narrow results by classification kind
 - `wordMatch` (boolean) — Match whole words only
 - `caseInsensitive` (boolean) — Case-insensitive matching

@@ -16,7 +16,6 @@ async function startServer(): Promise<FastMCP> {
     registerTools(server);
     registerPrompts(server);
 
-    console.info("ast-outline MCP server initialized");
     return server;
   } catch (error) {
     console.error("Failed to initialize server:", error);
