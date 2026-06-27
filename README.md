@@ -61,7 +61,6 @@ Get a structural outline of one or more files or directories. Returns signatures
 
 **Parameters:**
 - `paths` (string[], required) — File or directory paths to outline
-- `json` (boolean) — Return machine-readable JSON output
 - `imports` (boolean) — Include import/use/using statements
 - `noPrivate` (boolean) — Exclude private members
 - `noFields` (boolean) — Exclude fields/properties
@@ -74,7 +73,6 @@ Get a compact one-page module map of a directory. Each file gets a size label an
 
 **Parameters:**
 - `paths` (string[], required) — Directory paths to digest
-- `json` (boolean) — Return machine-readable JSON output
 
 ### `show`
 
@@ -83,7 +81,6 @@ Extract the full source body of one or more symbols from a file.
 **Parameters:**
 - `file` (string, required) — File path to extract symbols from
 - `symbols` (string[], required) — Symbol names to extract
-- `json` (boolean) — Return machine-readable JSON output
 - `signature` (boolean) — Return header/signature only, no body
 
 ### `grep`
@@ -93,7 +90,6 @@ AST-aware structural search across files. Matches grouped by enclosing class/fun
 **Parameters:**
 - `pattern` (string, required) — Search pattern (literal or regex, auto-detected)
 - `paths` (string[], required) — File or directory paths to search
-- `json` (boolean) — Return machine-readable JSON output
 - `kind` (enum: def|call|ref|import) — Narrow results by classification kind
 - `wordMatch` (boolean) — Match whole words only
 - `caseInsensitive` (boolean) — Case-insensitive matching
@@ -103,7 +99,7 @@ AST-aware structural search across files. Matches grouped by enclosing class/fun
 
 ## Prompts
 
-### `explore_codebase`
+### `explore-codebase`
 
 A prompt that guides an LLM to efficiently explore a codebase using ast-outline tools.
 

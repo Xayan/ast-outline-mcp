@@ -63,11 +63,12 @@ export function registerTools(server: FastMCP): void {
       "Use --signature to get header only.",
     parameters: z.object({
       file: z.string().describe("Absolute path to the file"),
-      symbols: z.array(z.string()).describe("Symbol names to extract"),
+      symbols: z.union([z.string(), z.array(z.string())]).describe("Symbol names to extract"),
       signature: z.boolean().optional().describe("Return header/signature only, no body"),
     }),
     execute: async (params) => {
-      const result = await service.show(params.file, params.symbols, {
+      const symbols = Array.isArray(params.symbols) ? params.symbols : [params.symbols];
+      const result = await service.show(params.file, symbols, {
         signature: params.signature,
       });
       if (result.exitCode !== 0 && !result.stdout) {
